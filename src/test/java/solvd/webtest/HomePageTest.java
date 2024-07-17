@@ -1,40 +1,51 @@
 package solvd.webtest;
 
-import com.solvd.webtest.components.Result;
-import com.solvd.webtest.pages.CategoriesPage;
-import com.solvd.webtest.pages.HomePage;
-import com.solvd.webtest.pages.LoginPage;
-import com.solvd.webtest.pages.SearchResultPage;
+import com.solvd.webtest.components.ResultBase;
+import com.solvd.webtest.pages.base.CategoriesPageBase;
+import com.solvd.webtest.pages.base.HomePageBase;
+import com.solvd.webtest.pages.base.LoginPageBase;
+import com.solvd.webtest.pages.base.SearchResultPageBase;
+import com.zebrunner.carina.core.registrar.tag.TestTag;
 import com.zebrunner.carina.utils.R;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Scanner;
 
 import static org.testng.Assert.*;
 
 public class HomePageTest extends AbstractTest {
     @Test
+    @TestTag(name = "platform", value = "desktop")
+    @TestTag(name = "platform", value = "mobile")
     public void emptyLoginTest() {
-        HomePage homePage = new HomePage(driver.get());
+        HomePageBase homePage = initPage(getDriver(), HomePageBase.class);
         homePage.open();
         assertTrue(homePage.isOpen(), "HomePage is not opened");
 
-        LoginPage loginPage = homePage.clickMyEbay();
+        LoginPageBase loginPage = homePage.clickMyEbay();
+        loginPage.waitUntil(l -> loginPage.isOpen(), Duration.ofMillis(3000));
         assertTrue(loginPage.isOpen(), "LoginPage is not opened");
 
         assertFalse(loginPage.tryLogin(""), "Missing login error message");
     }
 
     @Test
+    @TestTag(name = "platform", value = "desktop")
+    @TestTag(name = "platform", value = "mobile")
     public void validLoginTest() {
-        HomePage homePage = new HomePage(driver.get());
+        HomePageBase homePage = initPage(getDriver(), HomePageBase.class);
         homePage.open();
         assertTrue(homePage.isOpen(), "HomePage is not opened");
 
-        LoginPage loginPage = homePage.clickMyEbay();
+        LoginPageBase loginPage = homePage.clickMyEbay();
+        loginPage.waitUntil(l -> loginPage.isOpen(), Duration.ofMillis(3000));
         assertTrue(loginPage.isOpen(), "LoginPage is not opened");
 
         assertTrue(loginPage.tryLogin(R.CONFIG.get("user.login")), "Login error");
@@ -49,20 +60,24 @@ public class HomePageTest extends AbstractTest {
     }
 
     @Test(dataProvider = "searchData", threadPoolSize = 4, invocationCount = 1)
+    @TestTag(name = "platform", value = "desktop")
+    @TestTag(name = "platform", value = "mobile")
     public void validSearchWithCategoryTest(String query, String category) {
-        HomePage homePage = new HomePage(driver.get());
+        HomePageBase homePage = initPage(getDriver(), HomePageBase.class);
         homePage.open();
         assertTrue(homePage.isOpen(), "HomePage is not opened");
 
-        SearchResultPage searchResultPage = homePage.search(query, category);
+        SearchResultPageBase searchResultPage = homePage.search(query, category);
+        searchResultPage.waitUntil(s -> searchResultPage.isOpen(), Duration.ofMillis(3000));
         assertTrue(searchResultPage.isOpen(), "SearchResultPage is not opened");
 
-        List<Result> results = searchResultPage.getResults();
+        List<? extends ResultBase> results = searchResultPage.getResults();
+        searchResultPage.waitUntil(s -> !searchResultPage.getResults().isEmpty(), Duration.ofMillis(1000));
 
         assertFalse(results.isEmpty(), "No search results");
         searchResultPage.printResults();
 
-        List<Result> notMatching = new ArrayList<>();
+        List<ResultBase> notMatching = new ArrayList<>();
         assertTrue(
                 results.stream()
                         .allMatch(r -> {
@@ -73,26 +88,32 @@ public class HomePageTest extends AbstractTest {
                         }) || ((double) notMatching.size() / results.size() <= 0.1), "Product title not containing query" + notMatching);
     }
 
+    // not working on mobile
     @Test
+    @TestTag(name = "platform", value = "desktop")
     public void emptySearchTest() {
-        HomePage homePage = new HomePage(driver.get());
+        HomePageBase homePage = initPage(getDriver(), HomePageBase.class);
         homePage.open();
         assertTrue(homePage.isOpen(), "HomePage is not opened");
 
         homePage.search("", "");
-        assertTrue(new CategoriesPage(driver.get()).isOpen(), "CategoriesPage is not opened");
+        assertTrue(initPage(getDriver(), CategoriesPageBase.class).isOpen(), "CategoriesPage is not opened");
     }
 
     @Test(dataProvider = "searchData")
+    @TestTag(name = "platform", value = "desktop")
+    @TestTag(name = "platform", value = "mobile")
     public void searchSortPriceDescTest(String query, String category) {
-        HomePage homePage = new HomePage(driver.get());
+        HomePageBase homePage = initPage(getDriver(), HomePageBase.class);
         homePage.open();
         assertTrue(homePage.isOpen(), "HomePage is not opened");
 
-        SearchResultPage searchResultPage = homePage.search(query, category);
+        SearchResultPageBase searchResultPage = homePage.search(query, category);
+        searchResultPage.waitUntil(s -> searchResultPage.isOpen(), Duration.ofMillis(3000));
         assertTrue(searchResultPage.isOpen(), "SearchResultPage is not opened");
 
-        List<Result> results = searchResultPage.getResults();
+        List<? extends ResultBase> results = searchResultPage.getResults();
+        searchResultPage.waitUntil(s -> !searchResultPage.getResults().isEmpty(), Duration.ofMillis(2000));
         assertFalse(results.isEmpty(), "No search results");
 
         searchResultPage.setSortOption("Price + Shipping: highest first");
@@ -105,5 +126,60 @@ public class HomePageTest extends AbstractTest {
         prices.forEach(p -> LOGGER.info(p.toString()));
 
         assertEquals(prices.stream().sorted(Comparator.reverseOrder()).toList(), prices, "Results sorted incorrectly");
+    }
+
+    @Test
+    @TestTag(name = "platform", value = "desktop")
+    @TestTag(name = "platform", value = "mobile")
+    public void categoriesPageContentTest() {
+        HomePageBase homePage = initPage(getDriver(), HomePageBase.class);
+        homePage.open();
+        assertTrue(homePage.isOpen(), "HomePage is not opened");
+
+        CategoriesPageBase categoriesPage = homePage.openCategoriesPage();
+        categoriesPage.waitUntil(c -> categoriesPage.isOpen(), Duration.ofMillis(3000));
+        assertTrue(categoriesPage.isOpen(), "CategoriesPage is not opened");
+
+        LOGGER.info(categoriesPage.getCategories().toString());
+
+        List<String> expectedCategories = new ArrayList<>();
+        String filename = "/categories" + (R.CONFIG.get("env").equalsIgnoreCase("ios") ? "Mobile.txt" : "Desktop.txt");
+
+        try {
+            File myObj = new File(getClass().getResource(filename).getFile());
+            Scanner myReader = new Scanner(myObj);
+            while (myReader.hasNextLine())
+                expectedCategories.add(myReader.nextLine());
+            myReader.close();
+        } catch (FileNotFoundException e) {
+            System.out.println("Cant open file = " + filename + e);
+        }
+
+        LOGGER.info(expectedCategories.toString());
+
+        assertEquals(categoriesPage.getCategories(), expectedCategories);
+    }
+
+    @Test(dataProvider = "searchData")
+    @TestTag(name = "platform", value = "desktop")
+    @TestTag(name = "platform", value = "mobile")
+    public void correctSearchResultStructureTest(String query, String category) {
+        HomePageBase homePage = initPage(getDriver(), HomePageBase.class);
+        homePage.open();
+        assertTrue(homePage.isOpen(), "HomePage is not opened");
+
+        SearchResultPageBase searchResultPage = homePage.search(query, category);
+        searchResultPage.waitUntil(s -> searchResultPage.isOpen(), Duration.ofMillis(3000));
+        assertTrue(searchResultPage.isOpen(), "SearchResultPage is not opened");
+
+        List<? extends ResultBase> results = searchResultPage.getResults();
+        searchResultPage.waitUntil(s -> !searchResultPage.getResults().isEmpty(), Duration.ofMillis(2000));
+        assertFalse(results.isEmpty(), "No search results");
+
+        for (var r : results) {
+            assertNotSame("missing", r.getTitle(), "Result missing title " + r);
+            assertNotSame("0", r.getPrice(), "Result missing price " + r);
+            assertNotSame("missing", r.getItemLocation(), "Result missing location " + r);
+        }
     }
 }

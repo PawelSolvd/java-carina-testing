@@ -1,13 +1,18 @@
-package com.solvd.webtest.pages;
+package com.solvd.webtest.pages.desktop;
 
-import com.zebrunner.carina.utils.R;
+import com.solvd.webtest.pages.base.CategoriesPageBase;
+import com.solvd.webtest.pages.base.HomePageBase;
+import com.solvd.webtest.pages.base.LoginPageBase;
+import com.solvd.webtest.pages.base.SearchResultPageBase;
+import com.zebrunner.carina.utils.factory.DeviceType;
 import com.zebrunner.carina.webdriver.decorator.ExtendedWebElement;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.FindBy;
 
 import java.time.Duration;
 
-public class HomePage extends BasePage {
+@DeviceType(pageType = DeviceType.Type.DESKTOP, parentClass = HomePageBase.class)
+public class HomePage extends HomePageBase {
     @FindBy(id = "gh-eb-My")
     private ExtendedWebElement myEbayButton;
 
@@ -20,8 +25,14 @@ public class HomePage extends BasePage {
     @FindBy(id = "gh-btn")
     private ExtendedWebElement searchButton;
 
+    @FindBy(id = "gh-shop")
+    private ExtendedWebElement categoriesMenu;
+
+    @FindBy(id = "gh-shop-see-all-center")
+    private ExtendedWebElement allCategoriesLink;
+
     public HomePage(WebDriver driver) {
-        super(driver, R.CONFIG.get("homePage.url"));
+        super(driver);
     }
 
     @Override
@@ -30,13 +41,15 @@ public class HomePage extends BasePage {
         //searchCategorySelect = new Select(driver.findElement(By.id("gh-cat")));
     }
 
-    public LoginPage clickMyEbay() {
+    @Override
+    public LoginPageBase clickMyEbay() {
         if (myEbayButton.isElementPresent(Duration.ofMillis(100)))
             myEbayButton.click();
-        return new LoginPage(getDriver());
+        return initPage(getDriver(), LoginPageBase.class);
     }
 
-    public SearchResultPage search(String query, String category) {
+    @Override
+    public SearchResultPageBase search(String query, String category) {
         searchField.type(query);
 
         // new WebDriverWait(driver, Duration.ofMillis(500)).until(d -> searchCategorySelect.getWrappedElement().isDisplayed());
@@ -52,6 +65,17 @@ public class HomePage extends BasePage {
         } catch (Exception e) {
             LOGGER.warn("Caught exception {}", e.toString());
         }
-        return new SearchResultPage(getDriver());
+        return initPage(getDriver(), SearchResultPageBase.class);
+    }
+
+    @Override
+    public CategoriesPageBase openCategoriesPage() {
+        if (categoriesMenu.isElementPresent(Duration.ofMillis(1000)))
+            categoriesMenu.click();
+
+        if (allCategoriesLink.isElementPresent(Duration.ofMillis(1000)))
+            allCategoriesLink.click();
+
+        return new CategoriesPage(getDriver());
     }
 }

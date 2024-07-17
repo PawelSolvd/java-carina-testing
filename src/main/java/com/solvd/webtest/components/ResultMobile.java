@@ -1,6 +1,5 @@
 package com.solvd.webtest.components;
 
-import com.zebrunner.carina.utils.factory.DeviceType;
 import com.zebrunner.carina.webdriver.decorator.ExtendedWebElement;
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
@@ -8,8 +7,7 @@ import org.openqa.selenium.support.FindBy;
 
 import java.time.Duration;
 
-@DeviceType(pageType = DeviceType.Type.DESKTOP, parentClass = ResultBase.class)
-public class Result extends ResultBase {
+public class ResultMobile extends ResultBase {
     @FindBy(className = "s-item__title")
     private ExtendedWebElement title;
 
@@ -25,7 +23,7 @@ public class Result extends ResultBase {
     @FindBy(css = ".s-item__sep > span")
     private ExtendedWebElement sponsored;
 
-    public Result(WebDriver driver, SearchContext searchContext) {
+    public ResultMobile(WebDriver driver, SearchContext searchContext) {
         super(driver, searchContext);
     }
 
@@ -83,3 +81,4 @@ public class Result extends ResultBase {
         return getItemTitle() + " " + getPrice() + " " + getItemLocation() + " " + getShipping() + " " + getSponsored();
     }
 }
+
