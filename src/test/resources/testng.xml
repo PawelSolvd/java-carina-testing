@@ -16,7 +16,7 @@
 
     <test name="sort">
         <classes>
-            <class name="solvd.webtest.HomePageTest">
+            <class name="solvd.webtest.EBayTest">
                 <methods>
                     <include name="searchSortPriceDescTest"/>
                 </methods>

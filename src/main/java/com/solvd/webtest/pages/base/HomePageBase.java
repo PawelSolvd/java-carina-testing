@@ -7,12 +7,7 @@ public abstract class HomePageBase extends BasePage {
     public HomePageBase(WebDriver driver) {
         super(driver, R.CONFIG.get("homePage.url"));
     }
-
-    @Override
-    public void open() {
-        super.open();
-    }
-
+    
     public abstract LoginPageBase clickMyEbay();
 
     public abstract SearchResultPageBase search(String query, String category);

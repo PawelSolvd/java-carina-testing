@@ -20,18 +20,46 @@ import java.util.Scanner;
 
 import static org.testng.Assert.*;
 
-public class HomePageTest extends AbstractTest {
-    @Test
-    @TestTag(name = "platform", value = "desktop")
-    @TestTag(name = "platform", value = "mobile")
-    public void emptyLoginTest() {
+public class EBayTest extends AbstractTest {
+    public HomePageBase openHomePage() {
         HomePageBase homePage = initPage(getDriver(), HomePageBase.class);
         homePage.open();
         assertTrue(homePage.isOpen(), "HomePage is not opened");
 
+        return homePage;
+    }
+
+    public LoginPageBase openLoginPage(HomePageBase homePage) {
         LoginPageBase loginPage = homePage.clickMyEbay();
         loginPage.waitUntil(l -> loginPage.isOpen(), Duration.ofMillis(3000));
         assertTrue(loginPage.isOpen(), "LoginPage is not opened");
+
+        return loginPage;
+    }
+
+    public SearchResultPageBase openSearchResultPage(HomePageBase homePage, String query, String category) {
+        SearchResultPageBase searchResultPage = homePage.search(query, category);
+        searchResultPage.waitUntil(s -> searchResultPage.isOpen(), Duration.ofMillis(3000));
+        assertTrue(searchResultPage.isOpen(), "SearchResultPage is not opened");
+
+        return searchResultPage;
+    }
+
+    public CategoriesPageBase openCategoriesPage(HomePageBase homePage) {
+        CategoriesPageBase categoriesPage = homePage.openCategoriesPage();
+        categoriesPage.waitUntil(c -> categoriesPage.isOpen(), Duration.ofMillis(3000));
+        assertTrue(categoriesPage.isOpen(), "CategoriesPage is not opened");
+
+        return categoriesPage;
+    }
+
+
+    @Test
+    @TestTag(name = "platform", value = "desktop")
+    @TestTag(name = "platform", value = "mobile")
+    public void emptyLoginTest() {
+        HomePageBase homePage = openHomePage();
+        LoginPageBase loginPage = openLoginPage(homePage);
 
         assertFalse(loginPage.tryLogin(""), "Missing login error message");
     }
@@ -40,13 +68,8 @@ public class HomePageTest extends AbstractTest {
     @TestTag(name = "platform", value = "desktop")
     @TestTag(name = "platform", value = "mobile")
     public void validLoginTest() {
-        HomePageBase homePage = initPage(getDriver(), HomePageBase.class);
-        homePage.open();
-        assertTrue(homePage.isOpen(), "HomePage is not opened");
-
-        LoginPageBase loginPage = homePage.clickMyEbay();
-        loginPage.waitUntil(l -> loginPage.isOpen(), Duration.ofMillis(3000));
-        assertTrue(loginPage.isOpen(), "LoginPage is not opened");
+        HomePageBase homePage = openHomePage();
+        LoginPageBase loginPage = openLoginPage(homePage);
 
         assertTrue(loginPage.tryLogin(R.CONFIG.get("user.login")), "Login error");
     }
@@ -63,16 +86,10 @@ public class HomePageTest extends AbstractTest {
     @TestTag(name = "platform", value = "desktop")
     @TestTag(name = "platform", value = "mobile")
     public void validSearchWithCategoryTest(String query, String category) {
-        HomePageBase homePage = initPage(getDriver(), HomePageBase.class);
-        homePage.open();
-        assertTrue(homePage.isOpen(), "HomePage is not opened");
-
-        SearchResultPageBase searchResultPage = homePage.search(query, category);
-        searchResultPage.waitUntil(s -> searchResultPage.isOpen(), Duration.ofMillis(3000));
-        assertTrue(searchResultPage.isOpen(), "SearchResultPage is not opened");
+        HomePageBase homePage = openHomePage();
+        SearchResultPageBase searchResultPage = openSearchResultPage(homePage, query, category);
 
         List<? extends ResultBase> results = searchResultPage.getResults();
-        searchResultPage.waitUntil(s -> !searchResultPage.getResults().isEmpty(), Duration.ofMillis(1000));
 
         assertFalse(results.isEmpty(), "No search results");
         searchResultPage.printResults();
@@ -92,9 +109,7 @@ public class HomePageTest extends AbstractTest {
     @Test
     @TestTag(name = "platform", value = "desktop")
     public void emptySearchTest() {
-        HomePageBase homePage = initPage(getDriver(), HomePageBase.class);
-        homePage.open();
-        assertTrue(homePage.isOpen(), "HomePage is not opened");
+        HomePageBase homePage = openHomePage();
 
         homePage.search("", "");
         assertTrue(initPage(getDriver(), CategoriesPageBase.class).isOpen(), "CategoriesPage is not opened");
@@ -104,16 +119,10 @@ public class HomePageTest extends AbstractTest {
     @TestTag(name = "platform", value = "desktop")
     @TestTag(name = "platform", value = "mobile")
     public void searchSortPriceDescTest(String query, String category) {
-        HomePageBase homePage = initPage(getDriver(), HomePageBase.class);
-        homePage.open();
-        assertTrue(homePage.isOpen(), "HomePage is not opened");
-
-        SearchResultPageBase searchResultPage = homePage.search(query, category);
-        searchResultPage.waitUntil(s -> searchResultPage.isOpen(), Duration.ofMillis(3000));
-        assertTrue(searchResultPage.isOpen(), "SearchResultPage is not opened");
+        HomePageBase homePage = openHomePage();
+        SearchResultPageBase searchResultPage = openSearchResultPage(homePage, query, category);
 
         List<? extends ResultBase> results = searchResultPage.getResults();
-        searchResultPage.waitUntil(s -> !searchResultPage.getResults().isEmpty(), Duration.ofMillis(2000));
         assertFalse(results.isEmpty(), "No search results");
 
         searchResultPage.setSortOption("Price + Shipping: highest first");
@@ -132,13 +141,8 @@ public class HomePageTest extends AbstractTest {
     @TestTag(name = "platform", value = "desktop")
     @TestTag(name = "platform", value = "mobile")
     public void categoriesPageContentTest() {
-        HomePageBase homePage = initPage(getDriver(), HomePageBase.class);
-        homePage.open();
-        assertTrue(homePage.isOpen(), "HomePage is not opened");
-
-        CategoriesPageBase categoriesPage = homePage.openCategoriesPage();
-        categoriesPage.waitUntil(c -> categoriesPage.isOpen(), Duration.ofMillis(3000));
-        assertTrue(categoriesPage.isOpen(), "CategoriesPage is not opened");
+        HomePageBase homePage = openHomePage();
+        CategoriesPageBase categoriesPage = openCategoriesPage(homePage);
 
         LOGGER.info(categoriesPage.getCategories().toString());
 
@@ -164,16 +168,10 @@ public class HomePageTest extends AbstractTest {
     @TestTag(name = "platform", value = "desktop")
     @TestTag(name = "platform", value = "mobile")
     public void correctSearchResultStructureTest(String query, String category) {
-        HomePageBase homePage = initPage(getDriver(), HomePageBase.class);
-        homePage.open();
-        assertTrue(homePage.isOpen(), "HomePage is not opened");
-
-        SearchResultPageBase searchResultPage = homePage.search(query, category);
-        searchResultPage.waitUntil(s -> searchResultPage.isOpen(), Duration.ofMillis(3000));
-        assertTrue(searchResultPage.isOpen(), "SearchResultPage is not opened");
+        HomePageBase homePage = openHomePage();
+        SearchResultPageBase searchResultPage = openSearchResultPage(homePage, query, category);
 
         List<? extends ResultBase> results = searchResultPage.getResults();
-        searchResultPage.waitUntil(s -> !searchResultPage.getResults().isEmpty(), Duration.ofMillis(2000));
         assertFalse(results.isEmpty(), "No search results");
 
         for (var r : results) {

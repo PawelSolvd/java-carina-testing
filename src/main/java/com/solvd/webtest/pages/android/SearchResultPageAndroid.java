@@ -8,6 +8,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.FindBy;
 
+import java.time.Duration;
 import java.util.*;
 
 @DeviceType(pageType = DeviceType.Type.ANDROID_PHONE, parentClass = SearchResultPageBase.class)
@@ -37,6 +38,7 @@ public class SearchResultPageAndroid extends SearchResultPageBase {
     }
 
     public List<ResultMobile> getResults() {
+        waitUntil(s -> !results.isEmpty(), Duration.ofMillis(2000));
         return results;
     }
 
