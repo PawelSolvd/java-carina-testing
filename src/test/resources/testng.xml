@@ -2,7 +2,6 @@
 
 <suite name="Ebay" verbose="1" parallel="tests" thread-count="4">
     <!--    <test name="chromeTest" parallel="methods">
-            <parameter name="browser" value="chrome"/>
             <classes>
                 <class name="solvd.webtest.HomePageTest"/>
             </classes>
@@ -16,9 +15,8 @@
         </test>-->
 
     <test name="sort">
-        <parameter name="browser" value="chrome"/>
         <classes>
-            <class name="solvd.webtest.HomePageTest">
+            <class name="solvd.webtest.EBayTest">
                 <methods>
                     <include name="searchSortPriceDescTest"/>
                 </methods>

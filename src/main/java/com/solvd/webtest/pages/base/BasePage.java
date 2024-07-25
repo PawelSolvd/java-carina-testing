@@ -1,4 +1,4 @@
-package com.solvd.webtest.pages;
+package com.solvd.webtest.pages.base;
 
 import com.zebrunner.carina.webdriver.gui.AbstractPage;
 import org.openqa.selenium.By;

@@ -1,10 +1,12 @@
-package com.solvd.webtest.pages;
+package com.solvd.webtest.pages.base;
 
 import com.zebrunner.carina.utils.R;
 import org.openqa.selenium.WebDriver;
 
-public class CategoriesPage extends BasePage {
-    public CategoriesPage(WebDriver driver) {
+import java.util.List;
+
+public abstract class CategoriesPageBase extends BasePage {
+    public CategoriesPageBase(WebDriver driver) {
         super(driver, R.CONFIG.get("categoriesPage.url"));
     }
 
@@ -13,4 +15,7 @@ public class CategoriesPage extends BasePage {
         super.isOpen();
         return getDriver().getCurrentUrl().startsWith(url);
     }
+
+    public abstract List<String> getCategories();
 }
+

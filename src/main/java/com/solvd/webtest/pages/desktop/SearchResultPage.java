@@ -1,15 +1,18 @@
-package com.solvd.webtest.pages;
+package com.solvd.webtest.pages.desktop;
 
 import com.solvd.webtest.components.Result;
-import com.zebrunner.carina.utils.R;
+import com.solvd.webtest.pages.base.SearchResultPageBase;
+import com.zebrunner.carina.utils.factory.DeviceType;
 import com.zebrunner.carina.webdriver.decorator.ExtendedWebElement;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.FindBy;
 
+import java.time.Duration;
 import java.util.*;
 
-public class SearchResultPage extends BasePage {
+@DeviceType(pageType = DeviceType.Type.DESKTOP, parentClass = SearchResultPageBase.class)
+public class SearchResultPage extends SearchResultPageBase {
     @FindBy(css = ".srp-results .s-item__wrapper")
     private List<Result> results;
 
@@ -20,7 +23,7 @@ public class SearchResultPage extends BasePage {
     private List<ExtendedWebElement> sortOptions;
 
     public SearchResultPage(WebDriver driver) {
-        super(driver, R.CONFIG.get("searchResultPage.url"));
+        super(driver);
     }
 
     @Override
@@ -35,6 +38,7 @@ public class SearchResultPage extends BasePage {
     }
 
     public List<Result> getResults() {
+        waitUntil(s -> !results.isEmpty(), Duration.ofMillis(2000));
         return results;
     }
 
