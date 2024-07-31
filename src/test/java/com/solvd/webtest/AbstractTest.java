@@ -1,4 +1,4 @@
-package solvd.webtest;
+package com.solvd.webtest;
 
 import com.zebrunner.carina.core.IAbstractTest;
 import com.zebrunner.carina.utils.config.Configuration;

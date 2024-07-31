@@ -1,4 +1,4 @@
-package solvd.webtest;
+package com.solvd.webtest;
 
 import com.solvd.webtest.components.ResultBase;
 import com.solvd.webtest.pages.base.CategoriesPageBase;
