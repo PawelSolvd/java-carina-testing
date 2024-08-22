@@ -1,13 +1,15 @@
-package com.solvd.webtest.pages;
+package com.solvd.webtest.pages.desktop;
 
-import com.zebrunner.carina.utils.R;
+import com.solvd.webtest.pages.base.LoginPageBase;
+import com.zebrunner.carina.utils.factory.DeviceType;
 import com.zebrunner.carina.webdriver.decorator.ExtendedWebElement;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.FindBy;
 
 import java.time.Duration;
 
-public class LoginPage extends BasePage {
+@DeviceType(pageType = DeviceType.Type.DESKTOP, parentClass = LoginPageBase.class)
+public class LoginPage extends LoginPageBase {
     @FindBy(id = "userid")
     private ExtendedWebElement usernameField;
 
@@ -21,7 +23,7 @@ public class LoginPage extends BasePage {
     private ExtendedWebElement userInfo;
 
     public LoginPage(WebDriver driver) {
-        super(driver, R.CONFIG.get("loginPage.url"));
+        super(driver);
         setUiLoadedMarker(usernameField);
     }
 

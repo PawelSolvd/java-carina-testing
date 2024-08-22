@@ -1,17 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration name="JavaCourse" status="WARN">
+<Configuration name="JavaCourse" status="WARN" packages="com.zebrunner.agent.core.logging.log4j2">
+    <Properties>
+        <Property name="pattern">[%level] %d{HH:mm:ss.SSS} [%t] %logger{36} - %msg%n</Property>
+    </Properties>
     <Appenders>
         <Console name="STDOUT" target="SYSTEM_OUT">
-            <PatternLayout pattern="[%level] %d{HH:mm:ss.SSS} [%t] %logger{36} - %msg%n"/>
+            <PatternLayout pattern="${pattern}"/>
         </Console>
         <File name="File" fileName="logs/logs.log" append="false">
-            <PatternLayout pattern="[%level] %d{HH:mm:ss.SSS} [%t] %logger{36} - %msg%n"/>
+            <PatternLayout pattern="${pattern}"/>
         </File>
+        <ReportingAppender name="ReportingAppender">
+            <PatternLayout pattern="${pattern}"/>
+        </ReportingAppender>
     </Appenders>
     <Loggers>
         <Root level="info">
             <AppenderRef ref="STDOUT"/>
             <AppenderRef ref="File"/>
+            <AppenderRef ref="ReportingAppender"/>
         </Root>
     </Loggers>
 </Configuration>
