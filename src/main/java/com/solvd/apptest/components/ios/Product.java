@@ -1,25 +1,23 @@
-package com.solvd.apptest.components.android;
+package com.solvd.apptest.components.ios;
 
 import com.solvd.apptest.components.base.ProductBase;
 import com.solvd.apptest.pages.base.ProductPageBase;
-import com.zebrunner.carina.utils.android.IAndroidUtils;
-import com.zebrunner.carina.utils.mobile.IMobileUtils;
 import com.zebrunner.carina.webdriver.decorator.ExtendedWebElement;
-import org.openqa.selenium.By;
+import com.zebrunner.carina.webdriver.locator.ExtendedFindBy;
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.FindBy;
 
 import java.util.List;
 
-public class Product extends ProductBase implements IAndroidUtils {
-    @FindBy(id = "com.saucelabs.mydemoapp.android:id/titleTV")
+public class Product extends ProductBase {
+    @ExtendedFindBy(iosClassChain = "**/XCUIElementTypeStaticText[1]")
     private ExtendedWebElement name;
 
-    @FindBy(id = "com.saucelabs.mydemoapp.android:id/priceTV")
+    @ExtendedFindBy(iosClassChain = "**/XCUIElementTypeStaticText[2]")
     private ExtendedWebElement price;
 
-    @FindBy(xpath = "//android.view.ViewGroup[@resource-id=\"com.saucelabs.mydemoapp.android:id/rattingV\"]//android.widget.ImageView")
+    @FindBy(xpath = "//XCUIElementTypeOther//XCUIElementTypeButton")
     private List<ExtendedWebElement> stars;
 
     public Product(WebDriver driver, SearchContext searchContext, ExtendedWebElement element) {
@@ -54,10 +52,6 @@ public class Product extends ProductBase implements IAndroidUtils {
     }
 
     public void rateProduct(int rating) {
-        while (stars.isEmpty()) {
-            stars = findExtendedWebElements(By.xpath("//android.view.ViewGroup[@resource-id=\"com.saucelabs.mydemoapp.android:id/rattingV\"]//android.widget.ImageView"), 1);
-            swipeInContainer(this.findExtendedWebElement(By.xpath("./.."), 1), IMobileUtils.Direction.UP, 150);
-        }
         var rt = stars.get(rating - 1);
         rt.click();
     }

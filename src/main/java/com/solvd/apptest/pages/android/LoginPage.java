@@ -3,7 +3,6 @@ package com.solvd.apptest.pages.android;
 import com.solvd.apptest.pages.base.LoginPageBase;
 import com.zebrunner.carina.utils.factory.DeviceType;
 import com.zebrunner.carina.webdriver.decorator.ExtendedWebElement;
-import com.zebrunner.carina.webdriver.decorator.PageOpeningStrategy;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.FindBy;
 
@@ -20,11 +19,11 @@ public class LoginPage extends LoginPageBase {
 
     public LoginPage(WebDriver driver) {
         super(driver);
-        setPageOpeningStrategy(PageOpeningStrategy.BY_ELEMENT);
         setUiLoadedMarker(loginButton);
     }
 
     public void tryLogin(String username, String password) {
+        LOGGER.info("Trying to login with user \"{}\"  password \"{}\"", username, password);
         usernameField.type(username);
         passwordField.type(password);
 

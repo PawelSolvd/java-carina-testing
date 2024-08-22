@@ -1,6 +1,7 @@
 package com.solvd.apptest.components.android;
 
 import com.solvd.apptest.components.base.SideMenuBase;
+import com.solvd.apptest.pages.base.CatalogPageBase;
 import com.solvd.apptest.pages.base.LoginPageBase;
 import com.zebrunner.carina.webdriver.decorator.ExtendedWebElement;
 import org.openqa.selenium.WebDriver;
@@ -10,10 +11,14 @@ public class SideMenu extends SideMenuBase {
     @FindBy(xpath = "//android.widget.TextView[@resource-id=\"com.saucelabs.mydemoapp.android:id/itemTV\" and @text=\"Log In\"]")
     private ExtendedWebElement loginButton;
 
+    @FindBy(xpath = "//android.widget.TextView[@resource-id=\"com.saucelabs.mydemoapp.android:id/itemTV\" and @text=\"Catalog\"]")
+    private ExtendedWebElement catalogButton;
+
     public SideMenu(WebDriver driver) {
         super(driver);
         // context not based on SideMenu locator
         loginButton.setSearchContext(getDriver());
+        catalogButton.setSearchContext(getDriver());
     }
 
     public LoginPageBase openLoginPage() {
@@ -21,5 +26,13 @@ public class SideMenu extends SideMenuBase {
         loginButton.click();
 
         return initPage(getDriver(), LoginPageBase.class);
+    }
+
+    @Override
+    public CatalogPageBase openCatalogPage() {
+        this.click();
+        catalogButton.click();
+
+        return initPage(getDriver(), CatalogPageBase.class);
     }
 }

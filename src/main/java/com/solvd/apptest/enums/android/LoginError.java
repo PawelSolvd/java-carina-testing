@@ -1,4 +1,4 @@
-package com.solvd.apptest.pages.android;
+package com.solvd.apptest.enums.android;
 
 import com.zebrunner.carina.webdriver.decorator.ExtendedWebElement;
 import org.openqa.selenium.By;
