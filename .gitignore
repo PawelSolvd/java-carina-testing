@@ -41,3 +41,4 @@ logs
 screenshots/*
 reports/*
 .idea
+src/main/resources/agent.properties
