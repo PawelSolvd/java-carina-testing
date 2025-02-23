@@ -1,0 +1,51 @@
+{
+  "firefox": {
+    "default": "125.0",
+    "versions": {
+      "125.0": {
+        "image": "selenoid/vnc_firefox:125.0",
+        "port": "4444",
+        "path": "/wd/hub",
+        "env": [
+          "SCREEN_RESOLUTION=1280x720x24"
+        ],
+        "enableVideo": true
+      }
+    }
+  },
+  "opera": {
+    "default": "109.0",
+    "versions": {
+      "109.0": {
+        "image": "selenoid/vnc_opera:109.0",
+        "port": "4444",
+        "path": "/",
+        "enableVideo": true
+      }
+    }
+  },
+  "safari": {
+    "default": "latest",
+    "versions": {
+      "latest": {
+        "image": [
+          "/usr/bin/safaridriver",
+          "",
+          ""
+        ]
+      }
+    }
+  },
+  "chrome": {
+    "default": "127.0",
+    "versions": {
+      "127.0": {
+        "image": "selenoid/vnc_chrome:127.0",
+        "port": "4444",
+        "path": "/",
+        "enableVideo": true,
+        "videoCodec": "mpeg4"
+      }
+    }
+  }
+}

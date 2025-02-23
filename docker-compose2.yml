@@ -1,0 +1,25 @@
+version: "3.9"
+services:
+
+  selenoidhub:
+    image: aerokube/selenoid:1.11.3
+    volumes:
+      - ./selenoid/config:/etc/selenoid/:ro
+      - //var/run/docker.sock:/var/run/docker.sock
+      - ./selenoid/video:/opt/selenoid/video:rw
+    network_mode: bridge
+    ports:
+      - "4444:4444"
+    environment:
+      - OVERRIDE_VIDEO_OUTPUT_DIR=/Users/pawelhat/IdeaProjects/java-carina-testing/selenoid/video
+      - SCREEN_RESOLUTION=1920x1080x24
+    command: -conf /etc/selenoid/browsers.json -video-output-dir /opt/selenoid/video
+
+  selenoid-ui:
+    image: "aerokube/selenoid-ui"
+    network_mode: bridge
+    links:
+      - selenoidhub
+    ports:
+      - "8080:8080"
+    command: [ "--selenoid-uri", "http://selenoidhub:4444" ]

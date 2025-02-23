@@ -3,7 +3,6 @@ package com.solvd.webtest;
 import com.zebrunner.carina.core.IAbstractTest;
 import com.zebrunner.carina.utils.config.Configuration;
 import org.openqa.selenium.*;
-import org.openqa.selenium.chrome.ChromeOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.ITestResult;
@@ -15,7 +14,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Clock;
-import java.util.List;
 
 public abstract class AbstractTest implements IAbstractTest {
     static {
@@ -36,7 +34,7 @@ public abstract class AbstractTest implements IAbstractTest {
         String browser = Configuration.getRequired(env + ".capabilities.browserName").toLowerCase();
         if (env.equalsIgnoreCase("desktop")) {
             if (browser.equals("chrome")) {
-                ChromeOptions options = new ChromeOptions();
+           /*     ChromeOptions options = new ChromeOptions();
 
                 // Adding argument to disable the AutomationControlled flag
                 options.addArguments("--disable-blink-features=AutomationControlled", "--incognito", "--start-maximized");
@@ -49,7 +47,7 @@ public abstract class AbstractTest implements IAbstractTest {
 
                 driver.set(getDriver(browser, options));
 
-                ((JavascriptExecutor) driver.get()).executeScript("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})");
+                ((JavascriptExecutor) driver.get()).executeScript("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})");*/
             } else if (browser.equals("firefox"))
                 driver.set(getDriver("firefox"));
         } else
@@ -63,14 +61,14 @@ public abstract class AbstractTest implements IAbstractTest {
     @AfterMethod
     public void dispose(ITestResult result) {
         if (!result.isSuccess()) {
-            File file = ((TakesScreenshot) driver.get()).getScreenshotAs(OutputType.FILE);
+            File file = ((TakesScreenshot) getDriver()).getScreenshotAs(OutputType.FILE);
             try {
                 Files.copy(file.toPath(), Path.of("screenshots/img" + Clock.systemUTC().millis() + ".png"));
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }
-        driver.get().quit();
+        //getDriver().quit();
 
         LOGGER.info("Closing {} driver", getBrowserDetails());
     }
